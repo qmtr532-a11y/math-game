@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>سباق الأرقام: أكبر عدد وأصغر عدد</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&display=swap">
+<style>
+:root{--sky:#d6ecf0;--ink:#1c2a33;--road:#37444f;--line:#f4d35e;--paper:#fffaf0;--good:#1f9d63;--bad:#d6453d;--sun:#f4a52b;--chip-max:#1f9d63;--chip-min:#2e6fd6;color-scheme:light dark;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sky:#13232d;--ink:#eef3f5;--road:#222c34;--paper:#22313b;--chip-max:#43c488;--chip-min:#6fa3f5}}
+:root[data-theme="dark"]{--sky:#13232d;--ink:#eef3f5;--road:#222c34;--paper:#22313b;--chip-max:#43c488;--chip-min:#6fa3f5}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--sky);color:var(--ink);font-family:'Baloo Bhaijaan 2',Tahoma,'Segoe UI',sans-serif;font-size:18px;min-height:100vh}
+main{max-width:720px;margin:0 auto;padding:16px}
+h1{font-size:clamp(1.9rem,8vw,3rem);margin:.2em 0;font-weight:800}
+.card{background:var(--paper);border-radius:22px;padding:16px 20px;box-shadow:0 4px 0 rgba(0,0,0,.18)}
+.btn{font:inherit;font-weight:800;font-size:1.25rem;border:0;border-radius:16px;background:var(--sun);color:#2a1a00;padding:.45em 1.6em;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.25)}
+.btn:active{transform:translateY(3px)}
+.btn:disabled{opacity:.4;cursor:default}
+button:focus-visible{outline:4px solid var(--ink);outline-offset:3px}
+.top{display:flex;justify-content:space-between;font-weight:700;margin-bottom:8px}
+.bar{height:12px;background:rgba(0,0,0,.15);border-radius:8px;overflow:hidden;margin-bottom:12px}
+.bar i{display:block;height:100%;width:0;background:var(--sun);transition:width .4s}
+.q{text-align:center;font-size:clamp(1.15rem,5vw,1.6rem);font-weight:800;line-height:1.8}
+.chip{display:inline-block;color:#fff;border-radius:12px;padding:0 .6em;margin:0 .15em}
+.chip.max{background:var(--chip-max)}.chip.min{background:var(--chip-min)}
+.road{background:var(--road);border-radius:20px;margin:14px 0 10px;padding:12px 0 8px;overflow:hidden;direction:ltr;border-bottom:6px dashed var(--line)}
+.vehicle{display:flex;flex-direction:column;align-items:center;animation:in .8s cubic-bezier(.2,.8,.3,1) both}
+.vehicle.go{animation:out .9s ease-in forwards}
+.roof{display:flex;gap:8px;margin-bottom:-6px;position:relative;z-index:1}
+.tile,.slot{width:clamp(56px,17vw,78px);height:clamp(66px,20vw,92px);border-radius:12px;font:inherit;font-weight:800;font-size:clamp(2.2rem,10vw,3.2rem);line-height:1}
+.tile{background:#fffaf0;color:#1c2a33;border:4px solid var(--c);cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.3)}
+.tile.used{visibility:hidden}
+.vehicle svg{width:min(60vw,230px);height:auto}
+.slots{display:flex;justify-content:center;gap:10px;direction:ltr}
+.slotw{display:flex;flex-direction:column;align-items:center;font-size:.95rem;font-weight:700}
+.slot{background:var(--paper);color:var(--ink);border:4px dashed var(--ink);cursor:pointer}
+.slot.full{border-style:solid;border-color:var(--c)}
+.slot.bad{animation:shake .4s;border-color:var(--bad)}
+.actions{display:flex;justify-content:center;gap:12px;margin-top:12px}
+.msg{min-height:4.6em;text-align:center;font-weight:700;font-size:1.1rem;line-height:1.7;margin-top:8px}
+.msg.ok{color:var(--good)}.msg.no{color:var(--bad)}
+#start,#end{text-align:center}
+.stars{font-size:3rem;letter-spacing:.1em}
+.big{font-size:2.2rem;font-weight:800}
+.demo{display:flex;justify-content:center;gap:10px;direction:ltr;margin:10px 0;align-items:center;flex-wrap:wrap}
+.demo b{background:#fffaf0;color:#1c2a33;border:4px solid var(--sun);border-radius:12px;padding:0 .45em;font-size:1.8rem}
+#snd{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:10px;z-index:5;width:46px;height:46px;border-radius:50%;border:0;background:var(--paper);font-size:1.4rem;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.answer{text-align:center;direction:rtl;animation:pop .45s ease-out both}
+.answer small{display:block;font-size:1.2rem;font-weight:700}
+.answer b{display:block;font-size:clamp(3rem,17vw,5rem);line-height:1.2;color:var(--good);letter-spacing:.12em;direction:ltr}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+@keyframes in{from{transform:translateX(120vw)}}
+@keyframes out{to{transform:translateX(-130vw)}}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@media (prefers-reduced-motion:reduce){.vehicle,.slot.bad,.vehicle.go{animation-duration:.01s}.bar i{transition:none}}
+</style>
+</head>
+<body>
+<button id="snd" aria-label="تشغيل أو إيقاف الصوت">🔊</button>
+<main>
+<section id="start" class="card">
+  <h1>🚗 سباق الأرقام</h1>
+  <p>تابع القيمة المكانية: أكبر عدد وأصغر عدد</p>
+  <p>السيارة تحمل بطاقات أرقام. رتّبيها لتكوّني العدد المطلوب!</p>
+  <div class="demo"><b>٧</b><b>٣</b><b>٩</b></div>
+  <div class="demo">أكبر عدد <b>٩٧٣</b> أصغر عدد <b>٣٧٩</b></div>
+  <button class="btn" id="go">ابدئي السباق</button>
+</section>
+
+<section id="play" hidden>
+  <div class="top"><span id="rn"></span><span id="sc"></span></div>
+  <div class="bar"><i id="pb"></i></div>
+  <div class="card q" id="q" aria-live="polite"></div>
+  <div class="road"><div class="vehicle" id="veh"></div></div>
+  <div class="answer" id="ans" hidden></div>
+  <div class="actions"><button class="btn" id="next" hidden>السؤال التالي ◀</button></div>
+  <div id="build">
+    <div class="slots" id="slots"></div>
+    <div class="actions"><button class="btn" id="chk" disabled>تحقق</button></div>
+  </div>
+  <div id="judge" class="actions" hidden>
+    <button class="btn" data-j="yes">نعم</button><button class="btn" data-j="no">لا</button>
+  </div>
+  <div class="msg" id="msg" aria-live="polite"></div>
+</section>
+
+<section id="end" class="card" hidden>
+  <h1>أحسنتِ! 🏁</h1>
+  <div class="stars" id="stars"></div>
+  <div class="big" id="final"></div>
+  <p id="note"></p>
+  <button class="btn" id="again">العبي مرة أخرى</button>
+</section>
+</main>
+
+<script>
+const AR='٠١٢٣٤٥٦٧٨٩', ar=n=>String(n).replace(/\d/g,d=>AR[d]);
+const PL=['المئات','العشرات','الآحاد'], COL=['#e4572e','#2e86ab','#5fa03e','#8e5ea2','#d98b00'];
+const SETS=[[7,3,9],[8,3,7],[2,9,5],[6,1,8],[4,5,6]];
+const ROUNDS=[];SETS.forEach(s=>{ROUNDS.push({d:s,t:'max'},{d:s,t:'min'})});ROUNDS.push({d:[3,5,2],t:'judge'});
+const TOTAL=ROUNDS.length, $=id=>document.getElementById(id);
+let r,score,mistakes,locked,cur,tiles,slots;
+
+let AC=null,muted=false,ambG=null;
+function ctx(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tone(f1,f2,dur,type,vol,delay){const a=ctx();if(!a||muted)return;const t=a.currentTime+(delay||0),o=a.createOscillator(),g=a.createGain();
+  o.type=type;o.frequency.setValueAtTime(f1,t);o.frequency.exponentialRampToValueAtTime(f2,t+dur);
+  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+0.04);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+dur+0.05)}
+const engine=()=>{tone(50,130,.9,'sawtooth',.07);tone(55,120,.9,'square',.03)};
+const vroom=()=>{tone(90,420,1,'sawtooth',.08);tone(45,210,1,'square',.04)};
+const horn=()=>{[0,.55].forEach(d=>{tone(420,420,.42,'square',.2,d);tone(530,530,.42,'square',.2,d);tone(840,840,.42,'sawtooth',.08,d);tone(1060,1060,.42,'sawtooth',.06,d)})};
+const buzz=()=>tone(220,110,.35,'sawtooth',.06);
+const tap=()=>tone(700,900,.09,'sine',.07);
+function ambience(){const a=ctx();if(!a||ambG)return;
+  const b=a.createBuffer(1,a.sampleRate*2,a.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  const n=a.createBufferSource();n.buffer=b;n.loop=true;const f=a.createBiquadFilter();f.type='lowpass';f.frequency.value=380;
+  ambG=a.createGain();ambG.gain.value=muted?0:.05;n.connect(f);f.connect(ambG);ambG.connect(a.destination);n.start()}
+$('snd').onclick=()=>{muted=!muted;$('snd').textContent=muted?'🔇':'🔊';if(ambG)ambG.gain.value=muted?0:.05;ctx()};
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function carSVG(c){return `<svg viewBox="0 0 170 76" aria-hidden="true">
+<path d="M8 50c0-9 6-13 16-15l22-3 14-18c2-2 4-3 7-3h58c4 0 7 2 9 5l12 17 14 3c7 2 10 6 10 13v6H8z" fill="${c}"/>
+<path d="M56 32l11-13h28v13zM103 32V19h14l10 13z" fill="#cfeaf5"/>
+<circle cx="14" cy="43" r="5" fill="#ffe27a"/><circle cx="44" cy="58" r="13" fill="#1c2a33"/><circle cx="44" cy="58" r="5" fill="#aab6bd"/>
+<circle cx="126" cy="58" r="13" fill="#1c2a33"/><circle cx="126" cy="58" r="5" fill="#aab6bd"/></svg>`}
+function show(id){['start','play','end'].forEach(s=>$(s).hidden=s!==id)}
+function newGame(){ctx();ambience();r=0;score=0;mistakes=0;show('play');round()}
+
+function round(){
+  locked=false;const R=ROUNDS[r],c=COL[r%5];
+  tiles=shuffle(R.d);slots=[];
+  cur={t:R.t,wrong:false,ans:R.t==='max'?[...R.d].sort((a,b)=>b-a).join(''):[...R.d].sort((a,b)=>a-b).join('')};
+  $('rn').textContent='السؤال '+ar(r+1)+' من '+ar(TOTAL);
+  $('sc').textContent='النقاط: '+ar(score);
+  $('pb').style.width=(r/TOTAL*100)+'%';
+  $('msg').textContent='';$('msg').className='msg';$('ans').hidden=true;$('next').hidden=true;
+  const judge=R.t==='judge';
+  $('build').hidden=judge;$('judge').hidden=!judge;
+  $('q').innerHTML=judge
+    ?'كوّن فهد أصغر عدد من الأرقام <b>'+R.d.map(ar).join(' ، ')+'</b> وكتب <b>'+ar(532)+'</b>.<br>هل فهد على صواب؟'
+    :'ركّبي <span class="chip '+R.t+'">'+(R.t==='max'?'▲ أكبر':'▼ أصغر')+'</span> عدد من الأرقام على السيارة';
+  const v=$('veh');v.className='vehicle';void v.offsetWidth;
+  v.style.setProperty('--c',c);
+  v.innerHTML='<div class="roof">'+tiles.map((d,i)=>`<button class="tile" data-i="${i}" style="--c:${c}" aria-label="رقم ${ar(d)}">${ar(d)}</button>`).join('')+'</div>'+carSVG(c);
+  engine();
+  v.querySelectorAll('.tile').forEach(b=>b.onclick=()=>put(+b.dataset.i));
+  $('slots').innerHTML=[0,1,2].map(i=>`<div class="slotw"><button class="slot" data-s="${i}" style="--c:${c}" aria-label="خانة ${PL[i]}"></button>${PL[i]}</div>`).join('');
+  $('slots').querySelectorAll('.slot').forEach(b=>b.onclick=()=>take(+b.dataset.s));
+  draw();
+}
+function draw(){
+  document.querySelectorAll('.tile').forEach((b,i)=>b.classList.toggle('used',slots.includes(i)));
+  document.querySelectorAll('.slot').forEach((b,s)=>{const t=slots[s];b.textContent=t===undefined?'':ar(tiles[t]);b.classList.toggle('full',t!==undefined);b.classList.remove('bad')});
+  $('chk').disabled=locked||slots.length<3;
+}
+function put(i){if(locked||slots.length>=3||slots.includes(i))return;slots.push(i);tap();draw()}
+function take(s){if(locked||s>=slots.length)return;slots.splice(s,1);tap();draw()}
+
+function win(text){
+  locked=true;horn();score+=cur.wrong?5:10;$('sc').textContent='النقاط: '+ar(score);
+  $('chk').disabled=true;
+  $('build').hidden=true;$('judge').hidden=true;
+  $('ans').innerHTML='<small>'+(cur.t==='max'?'أكبر':'أصغر')+' عدد</small><b>'+ar(cur.ans)+'</b>';$('ans').hidden=false;
+  $('msg').className='msg ok';$('msg').textContent=text;
+  $('next').textContent=r+1<TOTAL?'السؤال التالي ◀':'عرض النتيجة 🏁';
+  $('next').disabled=false;$('next').hidden=false;
+}
+$('next').onclick=()=>{
+  $('next').disabled=true;$('veh').classList.add('go');vroom();
+  setTimeout(()=>{r++;r<TOTAL?round():finish()},900);
+};
+function lose(text){buzz();cur.wrong=true;mistakes++;$('msg').className='msg no';$('msg').textContent=text}
+
+$('chk').onclick=()=>{
+  if(locked||slots.length<3)return;
+  const val=slots.map(i=>tiles[i]).join('');
+  if(val===cur.ans){win(cur.wrong?'صحيح! 🎉':'ممتاز! أحسنتِ ⭐');return}
+  let k=0;while(val[k]===cur.ans[k])k++;
+  document.querySelectorAll('.slot')[k].classList.add('bad');
+  lose('راجعي خانة '+PL[k]+': اختاري '+(cur.t==='max'?'أكبر':'أصغر')+' رقم بقي معكِ، ثم جرّبي من جديد.');
+  setTimeout(()=>{slots=[];draw()},700);
+};
+document.querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{
+  if(locked)return;
+  if(b.dataset.j==='no')win('أحسنتِ! أصغر رقم ٢ يوضع في خانة المئات، ثم ٣، ثم ٥.');
+  else lose('فكّري: هل ٥ هو أصغر رقم؟ ابدئي بأصغر رقم في خانة المئات.');
+});
+function finish(){
+  show('end');[523,659,784,1047].forEach((f,i)=>tone(f,f,.25,'triangle',.08,i*.18));
+  const s=mistakes<=2?3:mistakes<=5?2:1;
+  $('stars').textContent='⭐'.repeat(s)+'☆'.repeat(3-s);
+  $('final').textContent='نقاطك: '+ar(score)+' من '+ar(TOTAL*10);
+  $('note').textContent=s===3?'أنتِ بطلة القيمة المكانية!':s===2?'عمل رائع! تدرّبي أكثر لتحصلي على ثلاث نجوم.':'استمري في المحاولة: الأكبر يبدأ بأكبر رقم، والأصغر يبدأ بأصغر رقم.';
+}
+$('go').onclick=newGame;$('again').onclick=newGame;
+</script>
+</body>
+</html>
